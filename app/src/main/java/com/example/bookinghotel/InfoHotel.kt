@@ -31,13 +31,14 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.ui.Alignment
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 
 
 @Composable
-fun HotelBookingScreen( modifier: Modifier = Modifier) {
+fun InfoHotel( modifier: Modifier = Modifier) {
     Box(modifier = Modifier.fillMaxSize()) {
         Image(
             painter = painterResource(R.drawable.hotel1),
@@ -73,7 +74,7 @@ fun HotelBookingScreen( modifier: Modifier = Modifier) {
                 Spacer(modifier = Modifier.height(8.dp))
                 Row {
                     repeat(5) {
-                        Icon(imageVector = Icons.Default.Star, contentDescription = "Star", tint = Color.Yellow)
+                        Icon(imageVector = Icons.Default.Star, contentDescription = "Star", tint = Color(0xFFFFD700))
                     }
                     Text(text = "5.0 ",  fontWeight = FontWeight.Bold, modifier = Modifier.padding(start = 5.dp, top = 5.dp))
                     Text(text = " - 1231 Reviews", fontWeight = FontWeight.W300, modifier = Modifier.padding(start = 2.dp, top = 5.dp))
@@ -113,26 +114,21 @@ fun HotelBookingScreen( modifier: Modifier = Modifier) {
             }
         }
 
-        Box(
+        Row(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(start = 20.dp, top = 20.dp) // Di chuyển ô vào bên trong
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            Box(
-                modifier = Modifier
-                    .size(50.dp)
-                    .background(color = Color(0xFFFFFFFF)
-                        , shape = CircleShape)
-                    .padding(12.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Icon(
-                    imageVector = Icons.Default.ArrowBack,
-                    contentDescription = "Back Icon",
-                    modifier = Modifier.size(22.dp)
-                )
+            IconButton(onClick = { /* Back */ }) {
+                Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
             }
+
+            IconButton(onClick = { /* More Options */ }) {
+                Icon(Icons.Default.MoreVert, contentDescription = "More", tint = Color.White)
             }
+        }
 
             Box(modifier = Modifier.fillMaxSize()) {
             // Phần chứa bookmark và button

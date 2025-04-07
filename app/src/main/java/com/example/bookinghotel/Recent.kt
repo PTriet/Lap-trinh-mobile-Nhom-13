@@ -25,11 +25,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.*
 
 @Composable
-fun SavedScreen(modifier : Modifier = Modifier){
+fun RecentScreen(modifier : Modifier = Modifier){
     Scaffold(
         backgroundColor = Color.White,
         bottomBar = {
@@ -46,14 +47,9 @@ fun SavedScreen(modifier : Modifier = Modifier){
                     icon = { Icon(Icons.Default.Home, contentDescription = "Home") }
                 )
                 BottomNavigationItem(
-                    selected = false,
-                    onClick = {},
-                    icon = { Icon(Icons.Default.AccessTime, contentDescription = "Time") }
-                )
-                BottomNavigationItem(
                     selected = true,
                     onClick = {},
-                    icon = {
+                    icon ={
                         Box(
                             modifier = Modifier
                                 .size(36.dp)
@@ -62,12 +58,17 @@ fun SavedScreen(modifier : Modifier = Modifier){
                             contentAlignment = Alignment.Center
                         ){
                             Icon(
-                                imageVector = Icons.Default.FavoriteBorder,
-                                contentDescription = "Saved",
+                                imageVector = Icons.Default.AccessTime,
+                                contentDescription = "Recent",
                                 tint = Color(0xFF1E1E1E)
                             )
                         }
                     }
+                )
+                BottomNavigationItem(
+                    selected = false,
+                    onClick = {},
+                    icon = { Icon(Icons.Default.FavoriteBorder, contentDescription = "Heart") }
                 )
                 BottomNavigationItem(
                     selected = false,
@@ -93,7 +94,7 @@ fun SavedScreen(modifier : Modifier = Modifier){
                     .padding(vertical = 16.dp)
             ){
                 Text(
-                    text = "Đã lưu",
+                    text = "Gần đây",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.align(Alignment.Center)
@@ -107,7 +108,7 @@ fun SavedScreen(modifier : Modifier = Modifier){
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // Hình + trái tim
+                // Hình + đồng hồ
                 Box(
                     modifier = Modifier
                         .wrapContentSize(),
@@ -149,13 +150,13 @@ fun SavedScreen(modifier : Modifier = Modifier){
                             .offset(x = 110.dp, y = (-70).dp)
                             .size(48.dp)
                             .clip(CircleShape)
-                            .background(Color.Black),
+                            .background(Color.Gray),
                         contentAlignment = Alignment.Center
                     ) {
                         Icon(
-                            imageVector = Icons.Default.FavoriteBorder,
-                            contentDescription = "Heart",
-                            tint = Color.Magenta
+                            imageVector = Icons.Default.AccessTime,
+                            contentDescription = "Recent",
+                            tint = Color.Black
                         )
                     }
                 }
@@ -164,7 +165,7 @@ fun SavedScreen(modifier : Modifier = Modifier){
 
                 // TIÊU ĐỀ PHỤ
                 Text(
-                    text = "Lưu chỗ nghỉ bạn yêu thích",
+                    text = "Địa điểm bạn đã tới",
                     fontSize = 24.sp,
                     fontWeight = FontWeight.Bold,
                     modifier = Modifier.align(Alignment.CenterHorizontally)
@@ -173,7 +174,7 @@ fun SavedScreen(modifier : Modifier = Modifier){
                 Spacer(modifier = Modifier.height(12.dp))
 
                 Text(
-                    text = "Tạo danh sách các chỗ nghỉ yêu thích để chia sẻ,\nSo sánh và đặt phòng",
+                    text = "Chưa có địa điểm đã đến",
                     fontSize = 14.sp,
                     fontWeight = FontWeight.Bold,
                     color = Color.DarkGray,

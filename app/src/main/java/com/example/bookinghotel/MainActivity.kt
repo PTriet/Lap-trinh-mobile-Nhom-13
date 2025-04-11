@@ -19,7 +19,8 @@ class MainActivity : ComponentActivity() {
         setContent {
             BookingHotelTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    InfoRoom(
+                    InfoRoom()
+                    SavedScreen(
                         modifier = Modifier.padding(innerPadding)
                     )
                 }

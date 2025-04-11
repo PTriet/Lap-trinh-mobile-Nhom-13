@@ -6,7 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.*
+import androidx.compose.material3.*
 import androidx.compose.ui.Modifier
 import com.example.bookinghotel.ui.theme.BookingHotelTheme
 
@@ -19,9 +19,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             BookingHotelTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    RecentScreen()
-                    InfoRoom()
-                    SavedScreen(
+                    InfoRoom(
                         modifier = Modifier.padding(innerPadding)
                     )
                 }

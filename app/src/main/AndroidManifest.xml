@@ -12,20 +12,17 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BookingHotel"
         tools:targetApi="31">
+
+        <!-- Khai báo hoạt động HotelBooking -->
         <activity
-            android:name=".InfoHotel"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
+            android:name="HotelBooking"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.BookingHotel">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
     </application>
-
 </manifest>

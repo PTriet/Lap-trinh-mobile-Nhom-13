@@ -19,7 +19,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             BookingHotelTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    InfoRoom(
+                    HotelBookingScreen( // Gọi giao diện từ file hotelbooking.kt
                         modifier = Modifier.padding(innerPadding)
                     )
                 }

@@ -134,7 +134,7 @@ fun SearchBarSection() {
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .background(Color.LightGray, shape = RoundedCornerShape(8.dp))
+            .background(Color.LightGray, shape = RoundedCornerShape(16.dp))
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -220,7 +220,7 @@ fun HotelsNearbyScreen() {
 @Composable
 fun HotelItem(name: String, address: String, price: String, rating: String, imageResId: Int) {
     Row(
-        modifier = Modifier.fillMaxWidth().background(Color.LightGray, shape = RoundedCornerShape(8.dp)).padding(12.dp),
+        modifier = Modifier.fillMaxWidth().background(Color.LightGray, shape = RoundedCornerShape(12.dp)).padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(

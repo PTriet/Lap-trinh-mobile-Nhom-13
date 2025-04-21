@@ -13,7 +13,11 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,49 +39,52 @@ class HotelBooking : ComponentActivity() {
 
 @Composable
 fun HotelBookingScreen(modifier: Modifier = Modifier) {
-    Scaffold(
-        backgroundColor = Color.White,
+    val selectedItem = remember { mutableStateOf(0) }
+
+    androidx.compose.material3.Scaffold(
         bottomBar = {
-            BottomNavigation(
-                backgroundColor = Color.LightGray,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(60.dp)
-            ) {
-                BottomNavigationItem(
-                    selected = true,
-                    onClick = {},
-                    icon = {
-                        Box(
-                            modifier = Modifier
-                                .size(36.dp)
-                                .clip(CircleShape)
-                                .background(Color(0xFFD1C4E9)),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Home,
-                                contentDescription = "Home",
-                                tint = Color(0xFF1E1E1E)
-                            )
-                        }
-                    }
+            NavigationBar(containerColor = Color(0xFFF1F0F6)) {
+                val items = listOf(
+                    Icons.Default.Home,
+                    Icons.Default.AccessTime,
+                    Icons.Default.FavoriteBorder,
+                    Icons.Default.Person
                 )
-                BottomNavigationItem(
-                    selected = false,
-                    onClick = {},
-                    icon = { Icon(Icons.Default.AccessTime, contentDescription = "Recent") }
-                )
-                BottomNavigationItem(
-                    selected = false,
-                    onClick = {},
-                    icon = { Icon(Icons.Default.FavoriteBorder, contentDescription = "Saved") }
-                )
-                BottomNavigationItem(
-                    selected = false,
-                    onClick = {},
-                    icon = { Icon(Icons.Default.Person, contentDescription = "Profile") }
-                )
+
+                items.forEachIndexed { index, icon ->
+                    val isSelected = selectedItem.value == index
+                    val isHome = index == 0
+
+                    NavigationBarItem(
+                        selected = isSelected,
+                        onClick = { selectedItem.value = index },
+                        icon = {
+                            if (isHome) {
+                                Box(
+                                    modifier = Modifier
+                                        .background(
+                                            color = if (isSelected) Color(0xFFDDE3FD) else Color.Transparent,
+                                            shape = CircleShape
+                                        )
+                                        .padding(6.dp)
+                                ) {
+                                    androidx.compose.material3.Icon(
+                                        imageVector = icon,
+                                        contentDescription = null,
+                                        tint = if (isSelected) Color(0xFF3F51B5) else Color.Black
+                                    )
+                                }
+                            } else {
+                                androidx.compose.material3.Icon(
+                                    imageVector = icon,
+                                    contentDescription = null,
+                                    tint = Color.Black
+                                )
+                            }
+                        },
+                        alwaysShowLabel = false
+                    )
+                }
             }
         }
     ) { innerPadding ->

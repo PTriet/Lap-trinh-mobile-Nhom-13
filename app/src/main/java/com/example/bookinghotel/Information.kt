@@ -134,7 +134,7 @@ fun InformationScreen(modifier: Modifier = Modifier) {
                     Text("Chào bạn đến với ", fontSize = 24.sp, fontWeight = FontWeight.Bold)
                     Text(
                         "NGAONGER!",
-                        fontSize = 24.sp,
+                        fontSize = 36.sp,
                         color = Color(0xFF1E88E5),
                         fontWeight = FontWeight.Bold
                     )

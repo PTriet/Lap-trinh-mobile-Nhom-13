@@ -27,8 +27,6 @@ import androidx.compose.material.icons.filled.Phone
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,62 +39,25 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import com.example.bookinghotel.components.BottomNavigationBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun InformationScreen(modifier: Modifier = Modifier) {
+fun InformationScreen(navController : NavController) {
     val selectedItem = remember { mutableStateOf(3) }
 
     Scaffold(
         bottomBar = {
-            NavigationBar(containerColor = Color(0xFFF1F0F6)) {
-                val items = listOf(
-                    Icons.Default.Home,
-                    Icons.Default.AccessTime,
-                    Icons.Default.FavoriteBorder,
-                    Icons.Default.Person
-                )
-
-                items.forEachIndexed { index, icon ->
-                    val isSelected = selectedItem.value == index
-                    val isProfile = index == 3
-
-                    NavigationBarItem(
-                        selected = isSelected,
-                        onClick = { selectedItem.value = index },
-                        icon = {
-                            if (isProfile) {
-                                Box(
-                                    modifier = Modifier
-                                        .background(
-                                            color = if (isSelected) Color(0xFFDDE3FD) else Color.Transparent,
-                                            shape = CircleShape
-                                        )
-                                        .padding(6.dp)
-                                ) {
-                                    Icon(
-                                        imageVector = icon,
-                                        contentDescription = null,
-                                        tint = if (isSelected) Color(0xFF3F51B5) else Color.Black
-                                    )
-                                }
-                            } else {
-                                Icon(
-                                    imageVector = icon,
-                                    contentDescription = null,
-                                    tint = Color.Black
-                                )
-                            }
-                        },
-                        alwaysShowLabel = false
-                    )
-                }
-            }
+            BottomNavigationBar(
+                navController = navController,
+                selectedItem = selectedItem.value
+            )
         }
     ) { innerPadding ->
         Column(modifier = Modifier.fillMaxSize()) {
 
-            // Header (outside padding)
+            // Header
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -143,7 +104,7 @@ fun InformationScreen(modifier: Modifier = Modifier) {
 
             Divider(color = Color.LightGray, thickness = 1.dp)
 
-            // Content below with padding
+            // Nội dung
             Column(modifier = Modifier.padding(innerPadding).padding(16.dp)) {
                 MenuSection(
                     title = "Quản lý tài khoản",

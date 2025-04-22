@@ -18,12 +18,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @Composable
-fun InfoRoom(modifier: Modifier = Modifier) {
+fun InfoRoom(navController: NavController, paddingValues: PaddingValues) {
     Box(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxSize()
+            .padding(paddingValues)
             .background(Color.Gray)
     ) {
         // Background Image
@@ -42,7 +44,7 @@ fun InfoRoom(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { /* TODO: Handle back action */ }) {
+            IconButton(onClick = { navController.popBackStack()}) {
                 Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
             }
             Text(

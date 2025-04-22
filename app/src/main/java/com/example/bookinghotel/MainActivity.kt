@@ -1,60 +1,58 @@
 package com.example.bookinghotel
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material3.*
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import com.example.bookinghotel.ui.theme.BookingHotelTheme
-
-
-//class MainActivity : ComponentActivity() {
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        enableEdgeToEdge()
-//        setContent {
-//            BookingHotelTheme {
-//                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-//                    HotelBookingScreen(
-//                        modifier = Modifier.padding(innerPadding)
-//                    )
-//                }
-//            }
-//        }
-//    }
-//}
+import androidx.compose.runtime.collectAsState
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
+import com.example.bookinghotel.ui.theme.HotelBookingTheme
+import com.example.bookinghotel.components.BottomNavigationBar
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
+        @OptIn(ExperimentalMaterial3Api::class)
         setContent {
-            BookingHotelTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+            HotelBookingTheme {
+                val navController = rememberNavController()
 
-                    // Có thể lấy context từ đây nếu muốn Toast
-                    val context = LocalContext.current
+                // Xác định selectedItem dựa trên route hiện tại
+                val currentRoute = navController
+                    .currentBackStackEntryFlow
+                    .collectAsState(initial = navController.currentBackStackEntry)
+                    .value?.destination?.route
 
-                    BookingFormScreen(
-                        modifier = Modifier.padding(innerPadding),
-                        onBookingConfirmed = { name, phone, checkIn, checkOut ->
-                            Toast.makeText(
-                                context,
-                                "Booking by $name\nFrom $checkIn to $checkOut",
-                                Toast.LENGTH_LONG
-                            ).show()
+                val selectedItemIndex = when (currentRoute) {
+                    "home" -> 0
+                    "recent" -> 1
+                    "saved" -> 2
+                    "prioritize" -> 3
+                    else -> -1 // Tab không thuộc BottomNav
+                }
+
+                Scaffold(
+                    contentWindowInsets = WindowInsets(0),
+                    bottomBar = {
+                        // Chỉ hiển thị BottomBar khi đang ở route hợp lệ
+                        if (selectedItemIndex != -1) {
+                            BottomNavigationBar(
+                                navController = navController,
+                                selectedItem = selectedItemIndex
+                            )
                         }
-                    )
-
+                    }
+                ) { innerPadding ->
+                    NavHost(
+                        navController = navController,
+                        startDestination = "home", // hoặc "login" nếu có màn login
+                    ) {
+                        setupNavGraph(navController, innerPadding)
+                    }
                 }
             }
         }
     }
 }
-
-

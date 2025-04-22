@@ -2,6 +2,7 @@ package com.example.bookinghotel
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,10 +19,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @Composable
-fun InfoHotel(modifier: Modifier = Modifier) {
-    Box(modifier = Modifier.fillMaxSize()) {
+fun InfoHotel(navController: NavController, paddingValues: PaddingValues) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(paddingValues),
+    ) {
         Image(
             painter = painterResource(R.drawable.hotel1),
             contentDescription = null,
@@ -79,7 +84,10 @@ fun InfoHotel(modifier: Modifier = Modifier) {
                             modifier = Modifier
                                 .weight(1f)
                                 .aspectRatio(1f)
-                                .padding(end = if (index < 3) 8.dp else 0.dp),
+                                .padding(end = if (index < 3) 8.dp else 0.dp)
+                                .clickable {
+                                    navController.navigate("inforroom")
+                                },
                             contentScale = ContentScale.Crop
                         )
                     }
@@ -94,7 +102,7 @@ fun InfoHotel(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { }) {
+            IconButton(onClick = {navController.popBackStack() }) {
                 Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
             }
             IconButton(onClick = { }) {

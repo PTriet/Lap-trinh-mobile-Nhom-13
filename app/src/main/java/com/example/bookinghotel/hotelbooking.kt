@@ -1,111 +1,49 @@
 package com.example.bookinghotel
 
-import android.os.Bundle
-import androidx.activity.ComponentActivity
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.material3.NavigationBar
-import androidx.compose.material3.NavigationBarItem
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-class HotelBooking : ComponentActivity() {
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContent {
-            HotelBookingScreen()
-        }
-    }
-}
+import androidx.navigation.NavController
 
 @Composable
-fun HotelBookingScreen(modifier: Modifier = Modifier) {
-    val selectedItem = remember { mutableStateOf(0) }
-
-    androidx.compose.material3.Scaffold(
-        bottomBar = {
-            NavigationBar(containerColor = Color(0xFFF1F0F6)) {
-                val items = listOf(
-                    Icons.Default.Home,
-                    Icons.Default.AccessTime,
-                    Icons.Default.FavoriteBorder,
-                    Icons.Default.Person
-                )
-
-                items.forEachIndexed { index, icon ->
-                    val isSelected = selectedItem.value == index
-                    val isHome = index == 0
-
-                    NavigationBarItem(
-                        selected = isSelected,
-                        onClick = { selectedItem.value = index },
-                        icon = {
-                            if (isHome) {
-                                Box(
-                                    modifier = Modifier
-                                        .background(
-                                            color = if (isSelected) Color(0xFFDDE3FD) else Color.Transparent,
-                                            shape = CircleShape
-                                        )
-                                        .padding(6.dp)
-                                ) {
-                                    androidx.compose.material3.Icon(
-                                        imageVector = icon,
-                                        contentDescription = null,
-                                        tint = if (isSelected) Color(0xFF3F51B5) else Color.Black
-                                    )
-                                }
-                            } else {
-                                androidx.compose.material3.Icon(
-                                    imageVector = icon,
-                                    contentDescription = null,
-                                    tint = Color.Black
-                                )
-                            }
-                        },
-                        alwaysShowLabel = false
-                    )
-                }
-            }
-        }
-    ) { innerPadding ->
-        Column(
-            modifier = Modifier
-                .padding(innerPadding)
-                .verticalScroll(rememberScrollState())
-                .padding(8.dp)
-        ) {
-            HeaderSection()
-            Spacer(modifier = Modifier.height(8.dp))
-            TitleSection()
-            Spacer(modifier = Modifier.height(8.dp))
-            SearchBarSection()
-            Spacer(modifier = Modifier.height(8.dp))
-            OptionsSection()
-            Spacer(modifier = Modifier.height(8.dp))
-            ImagesSection()
-            Spacer(modifier = Modifier.height(8.dp))
-            HotelsNearbyScreen()
-        }
+fun HotelBookingScreen(navController: NavController, paddingValues: PaddingValues) {
+    val searchText = remember{ mutableStateOf("") }
+    val searchQuery = rememberScrollState()
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
+            .verticalScroll(rememberScrollState())
+            .padding(8.dp)
+    ) {
+        HeaderSection()
+        Spacer(modifier = Modifier.height(8.dp))
+        TitleSection()
+        Spacer(modifier = Modifier.height(8.dp))
+        SearchBarSection(searchText)
+        Spacer(modifier = Modifier.height(8.dp))
+        OptionsSection()
+        Spacer(modifier = Modifier.height(8.dp))
+        ImagesSection()
+        Spacer(modifier = Modifier.height(8.dp))
+        HotelsNearbyScreen(searchText.value, navController)
     }
 }
 
@@ -137,7 +75,7 @@ fun TitleSection() {
 }
 
 @Composable
-fun SearchBarSection() {
+fun SearchBarSection(searchText : MutableState<String>) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -148,8 +86,8 @@ fun SearchBarSection() {
         Icon(painter = painterResource(id = R.drawable.ic_kinhlup), contentDescription = null, modifier = Modifier.size(32.dp), tint = Color.Unspecified)
         Spacer(modifier = Modifier.width(12.dp))
         TextField(
-            value = "",
-            onValueChange = {},
+            value = searchText.value,
+            onValueChange = {searchText.value = it},
             placeholder = { Text("Search hotel", fontSize = 14.sp, color = Color.Gray) },
             modifier = Modifier.weight(1f),
         )
@@ -201,7 +139,17 @@ fun ImagesSection() {
 }
 
 @Composable
-fun HotelsNearbyScreen() {
+fun HotelsNearbyScreen(searchQuery: String, navController: NavController) {
+    val hotels = listOf(
+        Triple("Shangrilla Hotel", "123 Pasteur", "$300.00/night"),
+        Triple("Grand Hotel", "456 Nguyễn Huệ", "$250.00/night"),
+        Triple("Luxury Stay", "789 Lê Lợi", "$500.00/night")
+    )
+
+    val filteredHotels = hotels.filter {
+        it.first.contains(searchQuery, ignoreCase = true)
+    }
+
     Column(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -210,30 +158,56 @@ fun HotelsNearbyScreen() {
             Text(text = "Hotels Nearby", fontSize = 18.sp, fontWeight = FontWeight.Bold)
             Text(text = "Show all", fontSize = 14.sp, color = Color.Blue)
         }
+
         Spacer(modifier = Modifier.height(8.dp))
-        Column {
-            listOf(
-                Triple("Shangrilla Hotel", "123 Pasteur", "$300.00/night"),
-                Triple("Grand Hotel", "456 Nguyễn Huệ", "$250.00/night"),
-                Triple("Luxury Stay", "789 Lê Lợi", "$500.00/night")
-            ).forEach { (name, address, price) ->
-                HotelItem(name = name, address = address, price = price, rating = "5.0", imageResId = R.drawable.img_khacsan1)
-                Spacer(modifier = Modifier.height(8.dp))
+
+        if (filteredHotels.isEmpty()) {
+            Text("No results found", color = Color.Gray)
+        } else {
+            Column {
+                filteredHotels.forEach { (name, address, price) ->
+                    HotelItem(
+                        name = name,
+                        address = address,
+                        price = price,
+                        rating = "5.0",
+                        imageResId = R.drawable.img_khacsan1,
+                        onClick = {
+                            navController.navigate("inforhotel"){
+                                launchSingleTop = true
+                            }
+                        }
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                }
             }
         }
     }
 }
 
 @Composable
-fun HotelItem(name: String, address: String, price: String, rating: String, imageResId: Int) {
+fun HotelItem(
+    name: String,
+    address: String,
+    price: String,
+    rating: String,
+    imageResId: Int,
+    onClick: () -> Unit
+) {
     Row(
-        modifier = Modifier.fillMaxWidth().background(Color.LightGray, shape = RoundedCornerShape(12.dp)).padding(12.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Color.LightGray, shape = RoundedCornerShape(12.dp))
+            .clickable { onClick() }
+            .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
             painter = painterResource(id = imageResId),
             contentDescription = null,
-            modifier = Modifier.size(80.dp),
+            modifier = Modifier
+                .size(80.dp)
+                .clickable { onClick() },
             contentScale = ContentScale.Crop
         )
         Spacer(modifier = Modifier.width(12.dp))
@@ -245,7 +219,12 @@ fun HotelItem(name: String, address: String, price: String, rating: String, imag
         Column(horizontalAlignment = Alignment.End) {
             Text(text = price, fontSize = 14.sp, color = Color.Red)
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Image(painter = painterResource(id = R.drawable.ic_ngoisao), contentDescription = null, modifier = Modifier.size(16.dp), contentScale = ContentScale.Fit)
+                Image(
+                    painter = painterResource(id = R.drawable.ic_ngoisao),
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    contentScale = ContentScale.Fit
+                )
                 Spacer(modifier = Modifier.width(4.dp))
                 Text(text = rating, fontSize = 14.sp, fontWeight = FontWeight.Bold)
             }

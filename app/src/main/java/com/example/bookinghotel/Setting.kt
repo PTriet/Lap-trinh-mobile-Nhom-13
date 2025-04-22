@@ -1,19 +1,9 @@
 package com.example.myapp
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.CenterAlignedTopAppBar
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,10 +13,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
+import com.example.bookinghotel.components.BottomNavigationBar
+
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DeviceSettingsScreen(modifier: Modifier = Modifier) {
+fun DeviceSettingsScreen(navController: NavController, modifier: Modifier = Modifier) {
     val selectedItem = remember { mutableStateOf(3) }
 
     Scaffold(
@@ -40,7 +34,7 @@ fun DeviceSettingsScreen(modifier: Modifier = Modifier) {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { /* Xử lý quay lại */ }) {
+                    IconButton(onClick = { navController.popBackStack() }) { // Điều hướng quay lại
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 },
@@ -52,9 +46,7 @@ fun DeviceSettingsScreen(modifier: Modifier = Modifier) {
             )
         },
         bottomBar = {
-            BottomNavigationBar(selectedItem.value) { index ->
-                selectedItem.value = index
-            }
+            BottomNavigationBar(navController = navController, selectedItem = selectedItem.value)
         }
     ) { innerPadding ->
         Column(
@@ -84,5 +76,5 @@ fun SettingField(title: String, value: String) {
 @Preview(showBackground = true)
 @Composable
 fun DeviceSettingsScreenPreview() {
-    DeviceSettingsScreen()
+    DeviceSettingsScreen(navController = rememberNavController())
 }

@@ -40,13 +40,15 @@ android {
     }
 
     composeOptions {
-        kotlinCompilerExtensionVersion = libs.versions.composeCompiler.get()
+        kotlinCompilerExtensionVersion = "1.5.3"
     }
 }
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
-    implementation(platform("androidx.compose:compose-bom:2024.02.00"))
+    //navigation
+    implementation(libs.androidx.navigation.compose)
+
 
     // Core
     implementation(libs.androidx.core.ktx)
@@ -75,9 +77,5 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
     testImplementation(kotlin("test"))
-
-    implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
-    implementation("com.jakewharton.threetenabp:threetenabp:1.4.5")
-    implementation("androidx.compose.ui:ui-text")
 
 }

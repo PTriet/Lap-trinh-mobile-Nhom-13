@@ -18,10 +18,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 
 @Composable
-fun InfoHotel(modifier: Modifier = Modifier) {
-    Box(modifier = Modifier.fillMaxSize()) {
+fun InfoHotel(navController: NavController, paddingValues: PaddingValues) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(paddingValues),
+    ) {
         Image(
             painter = painterResource(R.drawable.hotel1),
             contentDescription = null,
@@ -94,7 +98,7 @@ fun InfoHotel(modifier: Modifier = Modifier) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = { }) {
+            IconButton(onClick = {navController.popBackStack() }) {
                 Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
             }
             IconButton(onClick = { }) {

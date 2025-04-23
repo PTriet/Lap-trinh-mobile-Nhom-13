@@ -20,7 +20,7 @@ import com.example.bookinghotel.components.BottomNavigationBar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DeviceSettingsScreen(navController: NavController, modifier: Modifier = Modifier) {
+fun DeviceSettingsScreen(navController: NavController, paddingValues: PaddingValues) {
     val selectedItem = remember { mutableStateOf(3) }
 
     Scaffold(
@@ -50,8 +50,9 @@ fun DeviceSettingsScreen(navController: NavController, modifier: Modifier = Modi
         }
     ) { innerPadding ->
         Column(
-            modifier = modifier
+            modifier = Modifier
                 .fillMaxSize()
+                .padding(paddingValues)
                 .padding(innerPadding)
                 .padding(horizontal = 24.dp)
                 .padding(top = 24.dp)
@@ -76,5 +77,5 @@ fun SettingField(title: String, value: String) {
 @Preview(showBackground = true)
 @Composable
 fun DeviceSettingsScreenPreview() {
-    DeviceSettingsScreen(navController = rememberNavController())
+    DeviceSettingsScreen(navController = rememberNavController(), paddingValues = PaddingValues(0.dp))
 }

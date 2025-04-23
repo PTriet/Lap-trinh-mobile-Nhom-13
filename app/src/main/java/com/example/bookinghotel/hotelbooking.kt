@@ -49,20 +49,62 @@ fun HotelBookingScreen(navController: NavController, paddingValues: PaddingValue
 
 @Composable
 fun HeaderSection() {
+    val showDialog = remember { mutableStateOf(false) }
+    val addressText = remember { mutableStateOf("123 Pasteur") }
+
+    if (showDialog.value) {
+        AlertDialog(
+            onDismissRequest = { showDialog.value = false },
+            confirmButton = {
+                TextButton(onClick = { showDialog.value = false }) {
+                    Text("OK")
+                }
+            },
+            title = { Text("Edit Address") },
+            text = {
+                TextField(
+                    value = addressText.value,
+                    onValueChange = { addressText.value = it },
+                    placeholder = { Text("Enter new address") }
+                )
+            }
+        )
+    }
+
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Row(modifier = Modifier.weight(1f), verticalAlignment = Alignment.CenterVertically) {
-            Icon(painter = painterResource(id = R.drawable.ic_dinhvi), contentDescription = null, modifier = Modifier.size(30.dp), tint = Color.Unspecified)
+        Row(
+            modifier = Modifier
+                .weight(1f)
+                .clickable { showDialog.value = true }, // Mở dialog khi nhấn
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_dinhvi),
+                contentDescription = null,
+                modifier = Modifier.size(30.dp),
+                tint = Color.Unspecified
+            )
             Spacer(modifier = Modifier.width(6.dp))
-            Text(text = "123 Pasteur", fontSize = 14.sp, fontWeight = FontWeight.Bold)
+            Text(text = addressText.value, fontSize = 14.sp, fontWeight = FontWeight.Bold)
             Spacer(modifier = Modifier.width(6.dp))
-            Icon(painter = painterResource(id = R.drawable.ic_muiten), contentDescription = null, modifier = Modifier.size(30.dp), tint = Color.Unspecified)
+            Icon(
+                painter = painterResource(id = R.drawable.ic_muiten),
+                contentDescription = null,
+                modifier = Modifier.size(30.dp),
+                tint = Color.Unspecified
+            )
         }
-        Icon(painter = painterResource(id = R.drawable.ic_chuong), contentDescription = null, modifier = Modifier.size(36.dp), tint = Color.Unspecified)
+        Icon(
+            painter = painterResource(id = R.drawable.ic_chuong),
+            contentDescription = null,
+            modifier = Modifier.size(36.dp),
+            tint = Color.Unspecified
+        )
     }
 }
 

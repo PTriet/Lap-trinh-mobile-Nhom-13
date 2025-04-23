@@ -31,7 +31,6 @@ fun SignUpScreen(navController: NavController, paddingValues: PaddingValues) {
             .fillMaxSize()
             .padding(paddingValues)
     ) {
-        // ✅ TopAppBar có mũi tên back
         TopAppBar(
             title = {
                 Text("Đăng ký", fontSize = 20.sp)

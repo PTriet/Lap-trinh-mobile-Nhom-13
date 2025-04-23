@@ -42,3 +42,4 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintLayout" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "material3" }
 androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+threetenabp = { group = "com.jakewharton.threetenabp", name = "threetenabp", version = "1.4.4" }

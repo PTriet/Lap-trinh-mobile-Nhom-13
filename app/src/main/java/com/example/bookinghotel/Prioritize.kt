@@ -99,7 +99,7 @@ fun UserMenuScreen(navController: NavController, paddingValues: PaddingValues) {
                 navController.navigate("Offers")
             }
             MenuItem(icon = Icons.Default.Settings, text = "Cài đặt") {
-                navController.navigate("settings")
+                navController.navigate("setting")
             }
         }
     }

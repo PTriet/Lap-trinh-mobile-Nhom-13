@@ -124,11 +124,17 @@ fun InfoHotel(navController: NavController, paddingValues: PaddingValues) {
                         .background(color = Color.LightGray, shape = CircleShape),
                     contentAlignment = Alignment.Center
                 ) {
-                    Icon(Icons.Default.Bookmark, contentDescription = "Bookmark Icon", modifier = Modifier.size(24.dp))
+                    IconButton(
+                        onClick = {}
+                    ){
+                        Icon(Icons.Default.Bookmark, contentDescription = "Bookmark Icon", modifier = Modifier.size(24.dp))
+                    }
                 }
 
                 Button(
-                    onClick = { },
+                    onClick = {
+                        navController.navigate("booking")
+                    },
                     shape = RoundedCornerShape(50.dp),
                     modifier = Modifier
                         .align(Alignment.CenterVertically)

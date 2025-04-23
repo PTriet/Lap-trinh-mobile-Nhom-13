@@ -15,5 +15,7 @@ fun NavGraphBuilder.setupNavGraph(navController: NavController, innerPadding: Pa
     composable("prioritize") { UserMenuScreen(navController, innerPadding) }
     composable("signup"){ SignUpScreen(navController, innerPadding) }
     composable("inforhotel"){ InfoHotel(navController,innerPadding) }
-    composable(":inforrom"){ InfoRoom(navController, innerPadding) }
+    composable("inforroom"){ InfoRoom(navController, innerPadding) }
+    composable("setting"){ DeviceSettingsScreen(navController, innerPadding) }
+    composable("booking"){ BookingFormWrapperScreen(navController, innerPadding) }
 }

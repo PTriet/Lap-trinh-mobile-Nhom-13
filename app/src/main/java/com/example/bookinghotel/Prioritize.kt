@@ -26,7 +26,6 @@ fun UserMenuScreen(navController: NavController, paddingValues: PaddingValues) {
             .padding(paddingValues)
             .background(Color.White)
     ) {
-        // HEADER
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -80,7 +79,6 @@ fun UserMenuScreen(navController: NavController, paddingValues: PaddingValues) {
             }
         }
 
-        // MENU BODY
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -90,7 +88,13 @@ fun UserMenuScreen(navController: NavController, paddingValues: PaddingValues) {
                 navController.navigate("SecurityCenter")
             }
             MenuItem(icon = Icons.Default.FavoriteBorder, text = "Đã Lưu") {
-                navController.navigate("saved")
+                navController.navigate("saved"){
+                    popUpTo(navController.graph.startDestinationId){
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
             }
             MenuItem(icon = Icons.Default.Phone, text = "Liên hệ Dịch vụ Khách hàng") {
                 navController.navigate("ContactCustomerService")

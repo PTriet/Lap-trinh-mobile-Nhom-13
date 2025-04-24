@@ -125,7 +125,7 @@ fun SearchBarSection(searchText : MutableState<String>) {
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(painter = painterResource(id = R.drawable.ic_kinhlup), contentDescription = null, modifier = Modifier.size(32.dp), tint = Color.Unspecified)
+        Icon(painter = painterResource(id = R.drawable.ic_kinhnup), contentDescription = null, modifier = Modifier.size(32.dp), tint = Color.Unspecified)
         Spacer(modifier = Modifier.width(12.dp))
         TextField(
             value = searchText.value,

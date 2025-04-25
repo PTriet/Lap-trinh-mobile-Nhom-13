@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,6 +37,20 @@ fun SignUpScreen(navController: NavController, innerPadding: PaddingValues) {
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         Spacer(modifier = Modifier.height(32.dp))
+
+        // Thêm IconButton quay lại
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(start = 8.dp),
+            horizontalArrangement = Arrangement.Start
+        ) {
+            IconButton(onClick = { navController.popBackStack() }) {
+                Icon(
+                    imageVector = Icons.Default.ArrowBack,
+                    contentDescription = "Back",
+                    tint = Color.Black
+                )
+            }
+        }
 
         // Tiêu đề ứng dụng
         Column(

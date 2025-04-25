@@ -30,4 +30,7 @@ fun NavGraphBuilder.setupNavGraph(navController: NavController, innerPadding: Pa
     composable("inforroom") { InfoRoom(navController, innerPadding) }
     composable("setting") { DeviceSettingsScreen(navController, innerPadding) }
     composable("booking") { BookingFormWrapperScreen(navController, innerPadding) }
+    composable("security"){ SecurityCenterScreen(navController, innerPadding) }
+    composable("contact"){ ContactCustomerServiceScreen(navController, innerPadding) }
+    composable("offer"){ OfferScreen(navController, innerPadding) }
 }

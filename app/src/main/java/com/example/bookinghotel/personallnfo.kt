@@ -2,6 +2,8 @@ package com.example.myapp
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,6 +33,7 @@ fun getUserInfoByEmail(email: String): UserInfo {
     }
 }
 
+// Data class chứa thông tin người dùng
 data class UserInfo(
     val name: String,
     val gender: String,
@@ -40,24 +43,45 @@ data class UserInfo(
 )
 
 @Composable
-fun PersonalInfoScreen(navController: NavController, innerPadding: PaddingValues, email: String) {
-    val userInfo = getUserInfoByEmail(email) // Lấy thông tin từ email
+fun PersonalInfoScreen(navController: NavController, contentPadding: PaddingValues, email: String) {
+    // Lấy thông tin người dùng từ email
+    val userInfo = getUserInfoByEmail(email)
 
-    Scaffold(modifier = Modifier.padding(innerPadding)) {
+    Scaffold(
+        modifier = Modifier.padding(contentPadding) // Đảm bảo sử dụng contentPadding truyền vào
+    ) { innerPadding ->
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(16.dp),
+                .padding(innerPadding)
+                .padding(16.dp), // Thêm padding cố định nếu cần
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.Start
         ) {
-            // Tiêu đề
-            Text(
-                text = "Thông tin cá nhân",
-                fontSize = 24.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black
-            )
+            // Tiêu đề và nút quay lại
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(
+                    onClick = { navController.popBackStack() }, // Quay lại màn hình trước
+                    modifier = Modifier.padding(end = 16.dp)
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.ArrowBack,
+                        contentDescription = "Back",
+                        tint = Color.Black
+                    )
+                }
+                Text(
+                    text = "Thông tin cá nhân",
+                    fontSize = 24.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.Black,
+                    modifier = Modifier.weight(1f) // Đảm bảo Text căn giữa
+                )
+            }
+
             Spacer(modifier = Modifier.height(8.dp))
 
             Text(
@@ -89,7 +113,16 @@ fun PersonalInfoScreen(navController: NavController, innerPadding: PaddingValues
 @Composable
 fun InfoField(label: String, value: String) {
     Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
-        Text(text = label, fontSize = 16.sp, fontWeight = FontWeight.Bold, color = Color.Black)
-        Text(text = value, fontSize = 16.sp, color = Color.Gray)
+        Text(
+            text = label,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black
+        )
+        Text(
+            text = value,
+            fontSize = 16.sp,
+            color = Color.Gray
+        )
     }
 }

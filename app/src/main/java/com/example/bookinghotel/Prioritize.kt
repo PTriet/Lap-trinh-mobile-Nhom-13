@@ -85,7 +85,7 @@ fun UserMenuScreen(navController: NavController, paddingValues: PaddingValues) {
                 .padding(16.dp)
         ) {
             MenuItem(icon = Icons.Default.Lock, text = "Trung tâm thông tin bảo mật") {
-                navController.navigate("SecurityCenter")
+                navController.navigate("security")
             }
             MenuItem(icon = Icons.Default.FavoriteBorder, text = "Đã Lưu") {
                 navController.navigate("saved"){
@@ -97,10 +97,10 @@ fun UserMenuScreen(navController: NavController, paddingValues: PaddingValues) {
                 }
             }
             MenuItem(icon = Icons.Default.Phone, text = "Liên hệ Dịch vụ Khách hàng") {
-                navController.navigate("ContactCustomerService")
+                navController.navigate("contact")
             }
             MenuItem(icon = Icons.Default.LocalOffer, text = "Ưu đãi") {
-                navController.navigate("Offers")
+                navController.navigate("offer")
             }
             MenuItem(icon = Icons.Default.Settings, text = "Cài đặt") {
                 navController.navigate("setting")

@@ -99,13 +99,25 @@ fun HeaderSection(username: String) {
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        Row {
-            Text("Chào bạn đến với ", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 16.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             Text(
-                "NGAONGER!",
-                fontSize = 36.sp,
+                text = "Chào bạn đến với ",
+                fontSize = 24.sp,
+                fontWeight = FontWeight.Bold,
+                color = Color.Black,
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(
+                text = "NGAONGER!",
+                fontSize = 30.sp,
                 color = Color(0xFF1E88E5),
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
         }
     }
@@ -129,7 +141,13 @@ fun ContentSection(navController: NavController, email: String) {
             title = "Hoạt động du lịch",
             items = listOf("Đã Lưu" to Icons.Default.FavoriteBorder),
             onClick = { label ->
-                navController.navigate("saved_items_screen")
+                navController.navigate("saved") {
+                    popUpTo(navController.graph.startDestinationId){
+                        saveState = true
+                    }
+                    launchSingleTop = true
+                    restoreState = true
+                }
             }
         )
 
@@ -137,7 +155,7 @@ fun ContentSection(navController: NavController, email: String) {
             title = "Khám phá",
             items = listOf("Ưu đãi" to Icons.Default.LocalOffer),
             onClick = { label ->
-                navController.navigate("offers_screen")
+                navController.navigate("offer")
             }
         )
 
@@ -145,7 +163,7 @@ fun ContentSection(navController: NavController, email: String) {
             title = "Cài đặt",
             items = listOf("Cài đặt thiết bị" to Icons.Default.Settings),
             onClick = { label ->
-                navController.navigate("device_settings_screen")
+                navController.navigate("setting")
             }
         )
 
@@ -157,8 +175,8 @@ fun ContentSection(navController: NavController, email: String) {
             ),
             onClick = { label ->
                 when (label) {
-                    "Trung tâm thông tin bảo mật" -> navController.navigate("security_center_screen")
-                    "Liên hệ Dịch vụ Khách hàng" -> navController.navigate("customer_service_screen")
+                    "Trung tâm thông tin bảo mật" -> navController.navigate("security")
+                    "Liên hệ Dịch vụ Khách hàng" -> navController.navigate("contact")
                 }
             }
         )

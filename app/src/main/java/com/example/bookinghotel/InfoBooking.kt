@@ -28,6 +28,7 @@ fun BookingFormScreen(
     var checkInDate by remember { mutableStateOf(TextFieldValue("")) }
     var checkOutDate by remember { mutableStateOf(TextFieldValue("")) }
     var dateOrderError by remember { mutableStateOf(false) }
+    var phoneError by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
@@ -50,10 +51,19 @@ fun BookingFormScreen(
 
             OutlinedTextField(
                 value = phone,
-                onValueChange = { phone = it },
+                onValueChange = {
+                    phone = it
+                    phoneError = false
+                },
                 label = { Text("Phone Number") },
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
+                isError = phoneError,
+                supportingText = {
+                    if (phoneError) {
+                        Text("Chỉ được chứa số", color = MaterialTheme.colorScheme.error)
+                    }
+                }
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -82,6 +92,14 @@ fun BookingFormScreen(
 
         Button(
             onClick = {
+                // Kiểm tra xem số điện thoại có hợp lệ không
+                if (phone.all { it.isDigit() }) {
+                    phoneError = false
+                } else {
+                    phoneError = true
+                    return@Button
+                }
+
                 val isValidFormat = isValidDateFormat(checkInDate.text) && isValidDateFormat(checkOutDate.text)
                 val checkIn = parseDate(checkInDate.text)
                 val checkOut = parseDate(checkOutDate.text)
@@ -153,10 +171,7 @@ fun DateInputField(
                 isDateOrderInvalid -> Text("Ngày check-out phải sau check-in", color = MaterialTheme.colorScheme.error)
             }
         }
-
-
     )
-
 }
 
 fun isValidDateFormat(text: String): Boolean {

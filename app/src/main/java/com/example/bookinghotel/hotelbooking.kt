@@ -1,5 +1,6 @@
 package com.example.bookinghotel
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,9 +25,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
+// Tạo lớp dữ liệu Hotel để lưu thông tin khách sạn
+data class Hotel(
+    val name: String,
+    val address: String,
+    val price: String
+)
+
 @Composable
 fun HotelBookingScreen(navController: NavController, paddingValues: PaddingValues) {
-    val searchText = remember{ mutableStateOf("") }
+    val searchText = remember { mutableStateOf("") }
+    val hotels = remember {
+        listOf(
+            Hotel(name = "Shangrilla Hotel", address = "123 Pasteur", price = "$300.00/night"),
+            Hotel(name = "Grand Hotel", address = "456 Nguyễn Huệ", price = "$250.00/night"),
+            Hotel(name = "Luxury Stay", address = "789 Lê Lợi", price = "$500.00/night")
+        )
+    }
+
     val searchQuery = rememberScrollState()
     Column(
         modifier = Modifier
@@ -45,7 +61,7 @@ fun HotelBookingScreen(navController: NavController, paddingValues: PaddingValue
         Spacer(modifier = Modifier.height(8.dp))
         ImagesSection()
         Spacer(modifier = Modifier.height(8.dp))
-        HotelsNearbyScreen(searchText.value, navController)
+        HotelsNearbyScreen(hotels, searchText.value, navController) // Truyền danh sách khách sạn vào đây
     }
 }
 
@@ -118,7 +134,7 @@ fun TitleSection() {
 }
 
 @Composable
-fun SearchBarSection(searchText : MutableState<String>) {
+fun SearchBarSection(searchText: MutableState<String>) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
@@ -130,7 +146,7 @@ fun SearchBarSection(searchText : MutableState<String>) {
         Spacer(modifier = Modifier.width(12.dp))
         TextField(
             value = searchText.value,
-            onValueChange = {searchText.value = it},
+            onValueChange = { searchText.value = it },
             placeholder = { Text("Search hotel", fontSize = 14.sp, color = Color.Gray) },
             modifier = Modifier.weight(1f),
         )
@@ -182,15 +198,9 @@ fun ImagesSection() {
 }
 
 @Composable
-fun HotelsNearbyScreen(searchQuery: String, navController: NavController) {
-    val hotels = listOf(
-        Triple("Shangrilla Hotel", "123 Pasteur", "$300.00/night"),
-        Triple("Grand Hotel", "456 Nguyễn Huệ", "$250.00/night"),
-        Triple("Luxury Stay", "789 Lê Lợi", "$500.00/night")
-    )
-
+fun HotelsNearbyScreen(hotels: List<Hotel>, searchQuery: String, navController: NavController) {
     val filteredHotels = hotels.filter {
-        it.first.contains(searchQuery, ignoreCase = true)
+        it.name.contains(searchQuery, ignoreCase = true)
     }
 
     Column(modifier = Modifier.fillMaxWidth().padding(12.dp)) {
@@ -208,17 +218,21 @@ fun HotelsNearbyScreen(searchQuery: String, navController: NavController) {
             Text("No results found", color = Color.Gray)
         } else {
             Column {
-                filteredHotels.forEach { (name, address, price) ->
+                filteredHotels.forEach { hotel ->
                     HotelItem(
-                        name = name,
-                        address = address,
-                        price = price,
+                        name = hotel.name,
+                        address = hotel.address,
+                        price = hotel.price,
                         rating = "5.0",
                         imageResId = R.drawable.img_khacsan1,
-                        onClick = {
-                            navController.navigate("inforhotel"){
-                                launchSingleTop = true
-                            }
+                        onClick = { name, address, price, rating ->
+                            // Truyền tham số vào URL khi điều hướng
+                            val encodedName = Uri.encode(name)
+                            val encodedAddress = Uri.encode(address)
+                            val encodedPrice = Uri.encode(price)
+                            val encodedRating = Uri.encode(rating)
+
+                            navController.navigate("inforhotel/$encodedName/$encodedAddress/$encodedPrice/$encodedRating")
                         }
                     )
                     Spacer(modifier = Modifier.height(8.dp))
@@ -228,6 +242,7 @@ fun HotelsNearbyScreen(searchQuery: String, navController: NavController) {
     }
 }
 
+
 @Composable
 fun HotelItem(
     name: String,
@@ -235,13 +250,13 @@ fun HotelItem(
     price: String,
     rating: String,
     imageResId: Int,
-    onClick: () -> Unit
+    onClick: (String, String, String, String) -> Unit
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .background(Color.LightGray, shape = RoundedCornerShape(12.dp))
-            .clickable { onClick() }
+            .clickable { onClick(name, address, price, rating) } // Truyền dữ liệu khi nhấn vào
             .padding(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -249,8 +264,7 @@ fun HotelItem(
             painter = painterResource(id = imageResId),
             contentDescription = null,
             modifier = Modifier
-                .size(80.dp)
-                .clickable { onClick() },
+                .size(80.dp),
             contentScale = ContentScale.Crop
         )
         Spacer(modifier = Modifier.width(12.dp))
@@ -274,3 +288,5 @@ fun HotelItem(
         }
     }
 }
+
+

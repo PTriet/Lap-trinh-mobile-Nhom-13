@@ -18,12 +18,19 @@ fun BookingFormWrapperScreen(navController: NavController, paddingValues: Paddin
         modifier = Modifier
             .padding(paddingValues)
             .fillMaxSize(),
-        onBookingConfirmed = { name, phone, checkIn, checkOut ->
+        onBookingConfirmed = { name, phone, checkIn, checkOut, finalPrice ->
+            // Hiển thị thông báo khi đặt phòng
             Toast.makeText(
                 context,
-                "Đặt phòng bởi $name\nTừ $checkIn đến $checkOut",
+                "Đặt phòng bởi $name\nTừ $checkIn đến $checkOut\nGiá: \$${"%.2f".format(finalPrice)}",
                 Toast.LENGTH_LONG
             ).show()
+
+            // Quay lại màn hình trước sau khi xác nhận đặt phòng
+            navController.popBackStack()
+        },
+        onBackPressed = {
+            // Quay lại màn hình trước khi nhấn nút Quay lại
             navController.popBackStack()
         }
     )

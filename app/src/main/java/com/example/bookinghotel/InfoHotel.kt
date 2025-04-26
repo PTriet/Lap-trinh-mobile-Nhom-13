@@ -1,5 +1,6 @@
 package com.example.bookinghotel
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -22,10 +23,17 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 
 @Composable
-fun InfoHotel(navController: NavController, paddingValues: PaddingValues) {
+fun InfoHotel(
+    navController: NavController,
+    paddingValues: PaddingValues,
+    name: String,
+    address: String,
+    price: String,
+    rating: String
+) {
     Box(modifier = Modifier
         .fillMaxSize()
-        .padding(paddingValues),
+        .padding(paddingValues)
     ) {
         Image(
             painter = painterResource(R.drawable.hotel1),
@@ -52,9 +60,9 @@ fun InfoHotel(navController: NavController, paddingValues: PaddingValues) {
                     .fillMaxWidth()
             ) {
                 Spacer(modifier = Modifier.height(20.dp))
-                Text("Swiss hotel", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                Text(name, fontSize = 24.sp, fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(8.dp))
-                Text("211B Baker Street, London, England", fontSize = 16.sp, color = Color.Gray)
+                Text(address, fontSize = 16.sp, color = Color.Gray)
                 Spacer(modifier = Modifier.height(8.dp))
                 Row {
                     repeat(5) {
@@ -102,7 +110,7 @@ fun InfoHotel(navController: NavController, paddingValues: PaddingValues) {
             horizontalArrangement = Arrangement.SpaceBetween,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            IconButton(onClick = {navController.popBackStack() }) {
+            IconButton(onClick = { navController.popBackStack() }) {
                 Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Color.White)
             }
             IconButton(onClick = { }) {
@@ -126,13 +134,17 @@ fun InfoHotel(navController: NavController, paddingValues: PaddingValues) {
                 ) {
                     IconButton(
                         onClick = {}
-                    ){
+                    ) {
                         Icon(Icons.Default.Bookmark, contentDescription = "Bookmark Icon", modifier = Modifier.size(24.dp))
                     }
                 }
 
                 Button(
                     onClick = {
+                        // Ghi log để kiểm tra khi nhấn Book Now
+                        Log.d("InfoHotel", "Navigating to booking screen")
+
+                        // Đảm bảo dữ liệu được truyền đúng
                         navController.navigate("booking")
                     },
                     shape = RoundedCornerShape(50.dp),

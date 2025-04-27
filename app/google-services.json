@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "28208924507",
+    "firebase_url": "https://appdatkhachsan-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "appdatkhachsan",
+    "storage_bucket": "appdatkhachsan.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:28208924507:android:7e2e5c0006cd91147a7c7e",
+        "android_client_info": {
+          "package_name": "com.example.bookinghotel"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAehz6Nb91OBEkh3bM9qlJoPnyBc3qkeLE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

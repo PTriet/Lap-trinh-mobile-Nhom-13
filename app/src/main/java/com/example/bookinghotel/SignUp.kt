@@ -1,7 +1,10 @@
 package com.example.bookinghotel
 
+import Entity.User
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
@@ -11,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material3.Divider
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -24,6 +28,8 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.ktx.Firebase
 
 @Composable
 fun SignUpScreen(navController: NavController, innerPadding: PaddingValues) {
@@ -40,7 +46,9 @@ fun SignUpScreen(navController: NavController, innerPadding: PaddingValues) {
 
         // Thêm IconButton quay lại
         Row(
-            modifier = Modifier.fillMaxWidth().padding(start = 8.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp),
             horizontalArrangement = Arrangement.Start
         ) {
             IconButton(onClick = { navController.popBackStack() }) {
@@ -218,7 +226,19 @@ fun SignUpScreen(navController: NavController, innerPadding: PaddingValues) {
         }
     }
 }
-
+////
+@SuppressLint("StaticFieldLeak")
+val db = FirebaseFirestore.getInstance()
+fun addUser(hotel: User) {
+    db.collection("User")
+        .add(hotel)
+        .addOnSuccessListener { documentRef ->
+            Log.d("Firestore", "Hotel added with ID: ${documentRef.id}")
+        }
+        .addOnFailureListener { e ->
+            Log.w("Firestore", "Error adding hotel", e)
+        }
+}
 // Hàm hiển thị nút đăng ký với Google và số điện thoại
 @Composable
 fun SignInButton(text: String, iconPainter: Painter, textColor: Color = Color.Black, onClick: () -> Unit) {
@@ -234,4 +254,15 @@ fun SignInButton(text: String, iconPainter: Painter, textColor: Color = Color.Bl
         Spacer(modifier = Modifier.width(8.dp))
         Text(text, color = textColor)
     }
+}
+@Override
+fun onClick(){
+    val newUser = User(
+       id = "1",
+        name = "Dong Quan",
+        email = "quankietsuat@gmail.com",
+        phoneNumber = "0354805454"
+
+    )
+
 }

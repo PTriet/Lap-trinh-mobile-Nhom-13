@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -46,9 +47,10 @@ android {
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
+    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
     //navigation
     implementation(libs.androidx.navigation.compose)
-
+    implementation ("com.google.firebase:firebase-firestore-ktx")
 
     // Core
     implementation(libs.androidx.core.ktx)
@@ -79,4 +81,6 @@ dependencies {
     testImplementation(kotlin("test"))
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
     implementation(libs.threetenabp)
+
+    implementation ("com.google.firebase:firebase-auth-ktx")
 }

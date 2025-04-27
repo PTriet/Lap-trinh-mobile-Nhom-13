@@ -1,5 +1,7 @@
 package com.example.bookinghotel
 
+import Entity.User
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
@@ -21,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.input.VisualTransformation
 import androidx.navigation.NavController
+import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun LoginScreen(navController: NavController, innerPadding: PaddingValues) {
@@ -98,6 +101,7 @@ fun LoginScreen(navController: NavController, innerPadding: PaddingValues) {
         }
     }
 }
+
 
 @Composable
 fun InputField(

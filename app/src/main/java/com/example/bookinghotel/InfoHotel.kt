@@ -1,6 +1,7 @@
 package com.example.bookinghotel
 
 import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -9,18 +10,25 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.Composable
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
+import android.net.Uri
 
 @Composable
 fun InfoHotel(
@@ -31,9 +39,14 @@ fun InfoHotel(
     price: String,
     rating: String
 ) {
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .padding(paddingValues)
+    val context = LocalContext.current
+    val auth = FirebaseAuth.getInstance()
+    val db = FirebaseFirestore.getInstance()
+
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)
     ) {
         Image(
             painter = painterResource(R.drawable.hotel1),
@@ -133,7 +146,15 @@ fun InfoHotel(
                     contentAlignment = Alignment.Center
                 ) {
                     IconButton(
-                        onClick = {}
+                        onClick = {
+                            val user = auth.currentUser
+                            if (user != null) {
+                                saveHotel(db, user.uid, name, address, price, rating, context)
+                            } else {
+                                Toast.makeText(context, "Vui lòng đăng nhập để lưu!", Toast.LENGTH_SHORT).show()
+                                navController.navigate("login?pendingSave=true")
+                            }
+                        }
                     ) {
                         Icon(Icons.Default.Bookmark, contentDescription = "Bookmark Icon", modifier = Modifier.size(24.dp))
                     }
@@ -141,12 +162,10 @@ fun InfoHotel(
 
                 Button(
                     onClick = {
-                        // Ghi log để kiểm tra khi nhấn Book Now
                         Log.d("InfoHotel", "Navigating to booking screen")
-
-                        // Đảm bảo dữ liệu được truyền đúng
-                        navController.navigate("booking")
-                    },
+                        navController.navigate(
+                            "bookingform/${Uri.encode(name)}/${Uri.encode(address)}/${Uri.encode(price)}/${Uri.encode(rating)}"
+                        )                    },
                     shape = RoundedCornerShape(50.dp),
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
@@ -158,4 +177,32 @@ fun InfoHotel(
             }
         }
     }
+}
+
+fun saveHotel(
+    db: FirebaseFirestore,
+    uid: String,
+    name: String,
+    address: String,
+    price: String,
+    rating: String,
+    context: android.content.Context
+) {
+    val hotelData = hashMapOf(
+        "name" to name,
+        "address" to address,
+        "price" to price,
+        "rating" to rating
+    )
+
+    db.collection("users")
+        .document(uid)
+        .collection("savedHotels")
+        .add(hotelData)
+        .addOnSuccessListener {
+            Toast.makeText(context, "Đã lưu khách sạn!", Toast.LENGTH_SHORT).show()
+        }
+        .addOnFailureListener {
+            Toast.makeText(context, "Lưu thất bại!", Toast.LENGTH_SHORT).show()
+        }
 }

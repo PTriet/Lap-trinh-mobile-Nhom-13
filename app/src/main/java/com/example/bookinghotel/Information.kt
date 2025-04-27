@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -29,17 +30,30 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.bookinghotel.components.BottomNavigationBar
+import com.google.firebase.auth.FirebaseAuth
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun InformationScreen(navController: NavController, innerPadding: PaddingValues, username: String) {
-    val selectedItem = remember { mutableStateOf(3) } // Trạng thái lựa chọn thanh điều hướng
+    val auth = FirebaseAuth.getInstance()
+    val user = auth.currentUser
+
+    LaunchedEffect(user) {
+        if (user == null) {
+            // Nếu chưa login, đá về login screen
+            navController.navigate("login") {
+                popUpTo("home") { inclusive = true }
+            }
+        }
+    }
+
+    val displayName = user?.email ?: "Guest"  // Nếu chưa có user thì hiện Guest
 
     Scaffold(
         bottomBar = {
             BottomNavigationBar(
                 navController = navController,
-                selectedItem = selectedItem.value
+                selectedItem = 3
             )
         }
     ) { paddingValues ->
@@ -49,9 +63,7 @@ fun InformationScreen(navController: NavController, innerPadding: PaddingValues,
                 .padding(innerPadding)
                 .padding(paddingValues)
         ) {
-            // Header
-            HeaderSection(username) // Truyền username vào HeaderSection
-
+            HeaderSection(username = displayName)
             Divider(color = Color.LightGray, thickness = 1.dp)
 
             // Nội dung chính

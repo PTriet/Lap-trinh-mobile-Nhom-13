@@ -1,36 +1,32 @@
 package com.example.bookinghotel
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 
 @Composable
-fun BookingFormWrapperScreen(navController: NavController, paddingValues: PaddingValues) {
-    val context = LocalContext.current
-
+fun BookingFormWrapperScreen(
+    navController: NavController,
+    paddingValues: PaddingValues,
+    nameHotel: String,
+    addressHotel: String,
+    priceHotel: String,
+    ratingHotel: String
+) {
     BookingFormScreen(
+        navController = navController,
+        nameHotel = nameHotel,
+        addressHotel = addressHotel,
+        priceHotel = priceHotel,
+        ratingHotel = ratingHotel,
         modifier = Modifier
             .padding(paddingValues)
             .fillMaxSize(),
-        onBookingConfirmed = { name, phone, checkIn, checkOut, finalPrice ->
-            // Hiển thị thông báo khi đặt phòng
-            Toast.makeText(
-                context,
-                "Đặt phòng bởi $name\nTừ $checkIn đến $checkOut\nGiá: \$${"%.2f".format(finalPrice)}",
-                Toast.LENGTH_LONG
-            ).show()
-
-            // Quay lại màn hình trước sau khi xác nhận đặt phòng
-            navController.popBackStack()
-        },
         onBackPressed = {
-            // Quay lại màn hình trước khi nhấn nút Quay lại
             navController.popBackStack()
         }
     )

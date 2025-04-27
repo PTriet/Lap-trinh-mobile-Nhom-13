@@ -1,6 +1,7 @@
 package com.example.bookinghotel
 
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -12,6 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Notifications
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -19,11 +21,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 
 // Tạo lớp dữ liệu Hotel để lưu thông tin khách sạn
 data class Hotel(
@@ -67,14 +72,47 @@ fun HotelBookingScreen(navController: NavController, paddingValues: PaddingValue
 
 @Composable
 fun HeaderSection() {
+    val auth = FirebaseAuth.getInstance()
+    val db = FirebaseFirestore.getInstance()
+    val context = LocalContext.current
+    val user = auth.currentUser
+
     val showDialog = remember { mutableStateOf(false) }
     val addressText = remember { mutableStateOf("123 Pasteur") }
+
+    // Nếu đã login, load địa chỉ từ Firebase
+    LaunchedEffect(user?.uid) {
+        user?.uid?.let { uid ->
+            db.collection("users")
+                .document(uid)
+                .get()
+                .addOnSuccessListener { document ->
+                    val address = document.getString("address")
+                    if (address != null) {
+                        addressText.value = address
+                    }
+                }
+        }
+    }
 
     if (showDialog.value) {
         AlertDialog(
             onDismissRequest = { showDialog.value = false },
             confirmButton = {
-                TextButton(onClick = { showDialog.value = false }) {
+                TextButton(onClick = {
+                    showDialog.value = false
+                    user?.let {
+                        db.collection("users")
+                            .document(it.uid)
+                            .update("address", addressText.value)
+                            .addOnSuccessListener {
+                                Toast.makeText(context, "Cập nhật địa chỉ thành công!", Toast.LENGTH_SHORT).show()
+                            }
+                            .addOnFailureListener {
+                                Toast.makeText(context, "Cập nhật địa chỉ thất bại!", Toast.LENGTH_SHORT).show()
+                            }
+                    }
+                }) {
                     Text("OK")
                 }
             },
@@ -98,7 +136,7 @@ fun HeaderSection() {
         Row(
             modifier = Modifier
                 .weight(1f)
-                .clickable { showDialog.value = true }, // Mở dialog khi nhấn
+                .clickable(enabled = user != null) { if (user != null) showDialog.value = true },
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(

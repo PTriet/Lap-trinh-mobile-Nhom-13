@@ -129,6 +129,8 @@ fun SignUpScreen(navController: NavController, innerPadding: PaddingValues) {
             Spacer(modifier = Modifier.height(16.dp))
 
             // Nút đăng ký
+            // Chỉ update phần onClick của nút "Continue"
+
             Button(
                 onClick = {
                     val emailRegex = Regex("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,6}\$")
@@ -143,8 +145,36 @@ fun SignUpScreen(navController: NavController, innerPadding: PaddingValues) {
                             Toast.makeText(context, "Passwords do not match!", Toast.LENGTH_SHORT).show()
                         }
                         else -> {
-                            Toast.makeText(context, "Account successfully created!", Toast.LENGTH_SHORT).show()
-                            navController.navigate("login") // Điều hướng đến màn hình LoginScreen
+                            val auth = com.google.firebase.auth.FirebaseAuth.getInstance()
+                            val db = FirebaseFirestore.getInstance()
+
+                            auth.createUserWithEmailAndPassword(email, password)
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        val user = auth.currentUser
+                                        user?.let {
+                                            val userInfo = hashMapOf(
+                                                "uid" to it.uid,
+                                                "email" to it.email,
+                                                "phoneNumber" to "" // Vì lúc đăng ký mình chưa có phone
+                                            )
+                                            db.collection("users")
+                                                .document(it.uid)
+                                                .set(userInfo)
+                                                .addOnSuccessListener {
+                                                    Toast.makeText(context, "Account created successfully!", Toast.LENGTH_SHORT).show()
+                                                    navController.navigate("login") {
+                                                        popUpTo("signup") { inclusive = true }
+                                                    }
+                                                }
+                                                .addOnFailureListener { e ->
+                                                    Toast.makeText(context, "Failed to save user data: ${e.message}", Toast.LENGTH_SHORT).show()
+                                                }
+                                        }
+                                    } else {
+                                        Toast.makeText(context, "Signup failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                                    }
+                                }
                         }
                     }
                 },

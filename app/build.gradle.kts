@@ -43,14 +43,25 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.3"
     }
+
+    testOptions {
+        unitTests.isReturnDefaultValues = true
+    }
+
+    packagingOptions {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
+    }
 }
 
 dependencies {
     implementation(platform(libs.androidx.compose.bom))
-    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
-    //navigation
-    implementation(libs.androidx.navigation.compose)
-    implementation ("com.google.firebase:firebase-firestore-ktx")
+    implementation(platform("com.google.firebase:firebase-bom:32.2.3"))
+
+    // Firebase
+    implementation("com.google.firebase:firebase-auth-ktx")
+    implementation("com.google.firebase:firebase-firestore-ktx")
 
     // Core
     implementation(libs.androidx.core.ktx)
@@ -64,23 +75,23 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.material.icons.extended)
 
-    // AndroidX View system
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
+
+    // AndroidX
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
     implementation(libs.constraintlayout)
 
-    // Testing
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.junit)
-    androidTestImplementation(libs.androidx.espresso.core)
-    androidTestImplementation(libs.androidx.ui.test.junit4)
+    // DataStore
+    implementation(libs.androidx.datastore.preferences)
 
-    // Debug
-    debugImplementation(libs.androidx.ui.tooling)
-    debugImplementation(libs.androidx.ui.test.manifest)
-    testImplementation(kotlin("test"))
+    // Extra
     implementation("org.jetbrains.kotlinx:kotlinx-datetime:0.4.1")
     implementation(libs.threetenabp)
 
-    implementation ("com.google.firebase:firebase-auth-ktx")
+    // Test – KHÔNG cần khi build APK
+    testImplementation(libs.junit)
+    debugImplementation(libs.androidx.ui.tooling)
+    debugImplementation(libs.androidx.ui.test.manifest)
 }

@@ -5,12 +5,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
@@ -19,73 +19,66 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.navigation.NavController
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.datetime.*
 
 @Composable
 fun BookingFormScreen(
+    navController: NavController,
+    nameHotel: String,
+    addressHotel: String,
+    priceHotel: String,
+    ratingHotel: String,
     modifier: Modifier = Modifier,
-    onBookingConfirmed: (String, String, String, String, Double) -> Unit,  // Thêm tham số giá phòng
-    onBackPressed: () -> Unit // Thêm tham số callback quay lại
+    onBackPressed: () -> Unit
 ) {
-    var name by remember { mutableStateOf("") }
+    val context = LocalContext.current
+    val auth = FirebaseAuth.getInstance()
+    val db = FirebaseFirestore.getInstance()
+
+    var fullName by remember { mutableStateOf("") }
     var phone by remember { mutableStateOf("") }
     var checkInDate by remember { mutableStateOf(TextFieldValue("")) }
     var checkOutDate by remember { mutableStateOf(TextFieldValue("")) }
-    var dateOrderError by remember { mutableStateOf(false) }
-    var phoneError by remember { mutableStateOf(false) }
-
-    // Thêm giá phòng và mã voucher
-    var roomPrice by remember { mutableStateOf(100.0) }  // Giá phòng mặc định là 100 USD
     var voucherCode by remember { mutableStateOf("") }
-    var discountAmount by remember { mutableStateOf(0.0) }  // Giảm giá voucher
+    var roomPrice by remember { mutableStateOf(priceHotel.toDoubleOrNull() ?: 100.0) }
+    var phoneError by remember { mutableStateOf(false) }
+    var dateOrderError by remember { mutableStateOf(false) }
+    var discountAmount by remember { mutableStateOf(0.0) }
     var isVoucherValid by remember { mutableStateOf(false) }
-    var voucherError by remember { mutableStateOf(false) }
 
     Column(
         modifier = modifier
             .fillMaxSize()
-            .padding(20.dp),
-        verticalArrangement = Arrangement.Top // Đảm bảo các phần tử nằm từ trên xuống
+            .padding(20.dp)
     ) {
-        // Sử dụng Box để căn giữa tiêu đề và giữ nút quay lại ở bên trái
         Box(modifier = Modifier.fillMaxWidth()) {
-            // Nút quay lại
             IconButton(
                 onClick = onBackPressed,
-                modifier = Modifier
-                    .align(Alignment.CenterStart)  // Đặt nút quay lại ở đầu
-                    .padding(bottom = 16.dp)
+                modifier = Modifier.align(Alignment.CenterStart)
             ) {
                 Icon(Icons.Default.ArrowBack, contentDescription = "Back")
             }
-
-            // Tiêu đề "Order" căn giữa trong Box
             Text(
-                text = "Order",
-                fontSize = 30.sp,
+                text = "Booking Form",
+                fontSize = 24.sp,
                 fontWeight = FontWeight.Bold,
-                modifier = Modifier
-                    .align(Alignment.Center)  // Căn giữa tiêu đề
-                    .padding(start = 16.dp), // Thêm padding nếu cần
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.primary,
-                textAlign = TextAlign.Center
+                modifier = Modifier.align(Alignment.Center)
             )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Các trường nhập liệu còn lại...
         OutlinedTextField(
-            value = name,
-            onValueChange = { name = it },
+            value = fullName,
+            onValueChange = { fullName = it },
             label = { Text("Full Name") },
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Ô nhập số điện thoại
         OutlinedTextField(
             value = phone,
             onValueChange = {
@@ -94,18 +87,17 @@ fun BookingFormScreen(
             },
             label = { Text("Phone Number") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-            modifier = Modifier.fillMaxWidth(),
             isError = phoneError,
             supportingText = {
                 if (phoneError) {
                     Text("Chỉ được chứa số", color = MaterialTheme.colorScheme.error)
                 }
-            }
+            },
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Ô nhập ngày check-in
         DateInputField(
             label = "Check-in Date",
             value = checkInDate,
@@ -117,7 +109,6 @@ fun BookingFormScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Ô nhập ngày check-out
         DateInputField(
             label = "Check-out Date",
             value = checkOutDate,
@@ -130,58 +121,42 @@ fun BookingFormScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Ô nhập mã voucher (có thể bỏ trống)
         OutlinedTextField(
             value = voucherCode,
             onValueChange = {
                 voucherCode = it
-                voucherError = false
             },
             label = { Text("Voucher Code (Optional)") },
-            modifier = Modifier.fillMaxWidth(),
-            isError = voucherError,
-            supportingText = {
-                if (voucherError) {
-                    Text("Mã voucher không hợp lệ", color = MaterialTheme.colorScheme.error)
-                }
-            }
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Hiển thị giá phòng trước khi áp dụng mã voucher
-        Text("Room Price: \$${"%.2f".format(roomPrice)}")
-
-        // Kiểm tra mã voucher và áp dụng giảm giá nếu có
-        if (voucherCode.isNotEmpty()) {
-            // Kiểm tra mã voucher (Ví dụ: "DISCOUNT10")
-            if (voucherCode == "DISCOUNT10") {
-                isVoucherValid = true
-                discountAmount = 10.0 // Giảm giá 10% nếu voucher hợp lệ
-            } else {
-                isVoucherValid = false
-                voucherError = true
-                discountAmount = 0.0
-            }
+        // Tính discount
+        if (voucherCode == "DISCOUNT10") {
+            isVoucherValid = true
+            discountAmount = 10.0
         } else {
             isVoucherValid = false
             discountAmount = 0.0
         }
 
-        // Hiển thị số tiền giảm nếu có voucher
+        Text(
+            text = "Room Price: \$${"%.2f".format(roomPrice)}",
+            fontWeight = FontWeight.Bold
+        )
         if (isVoucherValid) {
-            Text("Discount Applied: \$${"%.2f".format(roomPrice * (discountAmount / 100))}")
+            Text(
+                text = "Discount Applied: \$${"%.2f".format(roomPrice * (discountAmount / 100))}",
+                color = MaterialTheme.colorScheme.primary
+            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Nút xác nhận đặt phòng
         Button(
             onClick = {
-                // Kiểm tra số điện thoại có hợp lệ không
-                if (phone.all { it.isDigit() }) {
-                    phoneError = false
-                } else {
+                if (!phone.all { it.isDigit() }) {
                     phoneError = true
                     return@Button
                 }
@@ -190,13 +165,41 @@ fun BookingFormScreen(
                 val checkIn = parseDate(checkInDate.text)
                 val checkOut = parseDate(checkOutDate.text)
 
-                if (isValidFormat && checkIn != null && checkOut != null) {
-                    if (!(checkOut > checkIn)) {
-                        dateOrderError = true
-                    } else {
-                        val finalPrice = roomPrice - (roomPrice * (discountAmount / 100))  // Tính giá sau giảm giá
-                        onBookingConfirmed(name, phone, checkInDate.text, checkOutDate.text, finalPrice)
-                    }
+                if (!isValidFormat || checkIn == null || checkOut == null || checkOut <= checkIn) {
+                    dateOrderError = true
+                    return@Button
+                }
+
+                val finalPrice = roomPrice - (roomPrice * (discountAmount / 100))
+                val user = auth.currentUser
+
+                if (user != null) {
+                    val bookingData = hashMapOf(
+                        "name" to nameHotel,
+                        "address" to addressHotel,
+                        "price" to priceHotel,
+                        "rating" to ratingHotel,
+                        "fullName" to fullName,
+                        "phone" to phone,
+                        "checkInDate" to checkInDate.text,
+                        "checkOutDate" to checkOutDate.text,
+                        "finalPrice" to "%.2f".format(finalPrice)
+                    )
+
+                    db.collection("users")
+                        .document(user.uid)
+                        .collection("recentBookings")
+                        .add(bookingData)
+                        .addOnSuccessListener {
+                            Toast.makeText(context, "Đặt phòng thành công!", Toast.LENGTH_SHORT).show()
+                            navController.popBackStack()
+                        }
+                        .addOnFailureListener {
+                            Toast.makeText(context, "Lỗi khi lưu đặt phòng!", Toast.LENGTH_SHORT).show()
+                        }
+                } else {
+                    Toast.makeText(context, "Bạn cần đăng nhập để đặt phòng!", Toast.LENGTH_SHORT).show()
+                    navController.navigate("login?pendingSave=true")
                 }
             },
             modifier = Modifier
@@ -208,11 +211,6 @@ fun BookingFormScreen(
         }
     }
 }
-
-
-
-
-
 @Composable
 fun DateInputField(
     label: String,
@@ -220,35 +218,14 @@ fun DateInputField(
     onValueChange: (TextFieldValue) -> Unit,
     isDateOrderInvalid: Boolean = false
 ) {
-    fun format(input: String): String {
-        val digits = input.filter { it.isDigit() }.take(8)
-        val sb = StringBuilder()
-        for (i in digits.indices) {
-            sb.append(digits[i])
-            if ((i == 1 || i == 3) && i != digits.lastIndex) sb.append('/')
-        }
-        return sb.toString()
-    }
-
-    fun isValidDate(text: String): Boolean {
-        val regex = Regex("""\d{2}/\d{2}/\d{4}""")
-        if (!regex.matches(text)) return false
-        val parts = text.split("/")
-        val day = parts[0].toIntOrNull() ?: return false
-        val month = parts[1].toIntOrNull() ?: return false
-        val year = parts[2].toIntOrNull() ?: return false
-        return day in 1..31 && month in 1..12 && year in 1000..9999
-    }
-
-    val formatted = format(value.text)
-    val newCursor = TextRange(formatted.length)
-    val isValid = isValidDate(formatted)
+    val formatted = remember(value.text) { formatDateInput(value.text) }
+    val isValid = remember(formatted) { isValidDateFormat(formatted) }
 
     OutlinedTextField(
-        value = TextFieldValue(formatted, newCursor),
+        value = TextFieldValue(formatted, TextRange(formatted.length)),
         onValueChange = {
-            val rawDigits = it.text.filter { ch -> ch.isDigit() }
-            val formattedText = format(rawDigits)
+            val digits = it.text.filter { ch -> ch.isDigit() }
+            val formattedText = formatDateInput(digits)
             onValueChange(TextFieldValue(formattedText, TextRange(formattedText.length)))
         },
         label = { Text(label) },
@@ -263,6 +240,16 @@ fun DateInputField(
             }
         }
     )
+}
+
+fun formatDateInput(input: String): String {
+    val digits = input.filter { it.isDigit() }.take(8)
+    val builder = StringBuilder()
+    for (i in digits.indices) {
+        builder.append(digits[i])
+        if ((i == 1 || i == 3) && i != digits.lastIndex) builder.append('/')
+    }
+    return builder.toString()
 }
 
 fun isValidDateFormat(text: String): Boolean {

@@ -73,7 +73,7 @@ fun UserMenuScreen(navController: NavController, paddingValues: PaddingValues) {
             Spacer(modifier = Modifier.height(12.dp))
 
             Button(onClick = {
-                navController.navigate("signup")
+                navController.navigate("login")
             }) {
                 Text("Đăng Nhập", color = Color.White, fontWeight = FontWeight.Bold)
             }

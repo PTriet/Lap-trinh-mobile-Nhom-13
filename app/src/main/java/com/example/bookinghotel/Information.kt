@@ -3,7 +3,9 @@ package com.example.myapp
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Divider
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.FavoriteBorder
@@ -60,7 +62,6 @@ fun InformationScreen(navController: NavController, innerPadding: PaddingValues,
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(innerPadding)
                 .padding(paddingValues)
         ) {
             HeaderSection(username = displayName)
@@ -218,7 +219,13 @@ fun MenuSection(title: String, items: List<Pair<String, ImageVector>>, onClick: 
                 tint = Color.Black
             )
             Spacer(modifier = Modifier.width(16.dp))
-            Text(text = label, fontSize = 16.sp)
+            Text(
+                text = label,
+                fontSize = 16.sp,
+                maxLines = 1,
+                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+            )
         }
+        Spacer(modifier = Modifier.height(8.dp)) // 👉 **Thêm dòng này để mỗi item cách nhau 8dp**
     }
 }

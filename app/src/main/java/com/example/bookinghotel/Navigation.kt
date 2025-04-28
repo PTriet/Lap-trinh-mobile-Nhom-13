@@ -129,4 +129,18 @@ fun NavGraphBuilder.setupNavGraph(
         val rating = backStackEntry.arguments?.getString("rating") ?: "Unknown"
         InfoHotel(navController, innerPadding, name, address, price, rating)
     }
+
+    composable("inforroom") {
+        InfoRoom(navController, innerPadding)
+    }
+    composable("contact") {
+        ContactCustomerServiceScreen(navController, innerPadding)
+    }
+    composable("security") {
+        SecurityCenterScreen(navController, innerPadding)
+    }
+    composable("offer") {
+        OfferScreen(navController, innerPadding)
+    }
 }
+

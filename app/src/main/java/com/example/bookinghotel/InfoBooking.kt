@@ -141,10 +141,7 @@ fun BookingFormScreen(
             discountAmount = 0.0
         }
 
-        Text(
-            text = "Room Price: \$${"%.2f".format(roomPrice)}",
-            fontWeight = FontWeight.Bold
-        )
+
         if (isVoucherValid) {
             Text(
                 text = "Discount Applied: \$${"%.2f".format(roomPrice * (discountAmount / 100))}",

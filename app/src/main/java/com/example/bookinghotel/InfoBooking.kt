@@ -42,7 +42,7 @@ fun BookingFormScreen(
     var checkInDate by remember { mutableStateOf(TextFieldValue("")) }
     var checkOutDate by remember { mutableStateOf(TextFieldValue("")) }
     var voucherCode by remember { mutableStateOf("") }
-    var phoneError by remember { mutableStateOf(false) }
+    var phoneError by remember { mutableStateOf<String?>(null) }
     var dateOrderError by remember { mutableStateOf(false) }
     var discountAmount by remember { mutableStateOf(0.0) }
     var isVoucherValid by remember { mutableStateOf(false) }
@@ -69,7 +69,6 @@ fun BookingFormScreen(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        // Thêm dòng hiện giá khách sạn
         Text(
             text = "Price: $priceHotel",
             fontWeight = FontWeight.Bold,
@@ -94,14 +93,14 @@ fun BookingFormScreen(
             value = phone,
             onValueChange = {
                 phone = it
-                phoneError = false
+                phoneError = null
             },
             label = { Text("Phone Number") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
-            isError = phoneError,
+            isError = phoneError != null,
             supportingText = {
-                if (phoneError) {
-                    Text("Chỉ được chứa số", color = MaterialTheme.colorScheme.error)
+                phoneError?.let { errorMsg ->
+                    Text(errorMsg, color = MaterialTheme.colorScheme.error)
                 }
             },
             modifier = Modifier.fillMaxWidth()
@@ -109,21 +108,9 @@ fun BookingFormScreen(
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        DateInputField(
-            label = "Check-in Date",
-            value = checkInDate,
-            onValueChange = { checkInDate = it },
-            isDateOrderInvalid = dateOrderError
-        )
-
+        DateInputField("Check-in Date", checkInDate, { checkInDate = it }, isDateOrderInvalid = dateOrderError)
         Spacer(modifier = Modifier.height(8.dp))
-
-        DateInputField(
-            label = "Check-out Date",
-            value = checkOutDate,
-            onValueChange = { checkOutDate = it },
-            isDateOrderInvalid = dateOrderError
-        )
+        DateInputField("Check-out Date", checkOutDate, { checkOutDate = it }, isDateOrderInvalid = dateOrderError)
 
         Spacer(modifier = Modifier.height(8.dp))
 
@@ -152,16 +139,25 @@ fun BookingFormScreen(
 
         Button(
             onClick = {
-                if (!phone.all { it.isDigit() }) {
-                    phoneError = true
+                if (phone.isEmpty() || !phone.all { it.isDigit() }) {
+                    phoneError = "Chỉ được chứa số"
+                    return@Button
+                }
+                if (phone.length != 10) {
+                    phoneError = "Số điện thoại phải đúng 10 số"
+                    return@Button
+                }
+                if (!phone.startsWith("0")) {
+                    phoneError = "Số đầu tiên phải là số 0"
                     return@Button
                 }
 
                 val isValidFormat = isValidDateFormat(checkInDate.text) && isValidDateFormat(checkOutDate.text)
                 val checkIn = parseDate(checkInDate.text)
                 val checkOut = parseDate(checkOutDate.text)
+                val today = Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).date
 
-                if (!isValidFormat || checkIn == null || checkOut == null || checkOut <= checkIn) {
+                if (!isValidFormat || checkIn == null || checkOut == null || checkIn < today || checkOut <= checkIn) {
                     dateOrderError = true
                     return@Button
                 }
@@ -231,7 +227,7 @@ fun DateInputField(
         supportingText = {
             when {
                 !isValid -> Text("Ngày không hợp lệ", color = MaterialTheme.colorScheme.error)
-                isDateOrderInvalid -> Text("Ngày check-out phải sau check-in", color = MaterialTheme.colorScheme.error)
+                isDateOrderInvalid -> Text("Ngày không hợp lệ", color = MaterialTheme.colorScheme.error)
             }
         }
     )

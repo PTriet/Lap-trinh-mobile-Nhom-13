@@ -42,7 +42,6 @@ fun BookingFormScreen(
     var checkInDate by remember { mutableStateOf(TextFieldValue("")) }
     var checkOutDate by remember { mutableStateOf(TextFieldValue("")) }
     var voucherCode by remember { mutableStateOf("") }
-    var roomPrice by remember { mutableStateOf(priceHotel.toDoubleOrNull() ?: 100.0) }
     var phoneError by remember { mutableStateOf(false) }
     var dateOrderError by remember { mutableStateOf(false) }
     var discountAmount by remember { mutableStateOf(0.0) }
@@ -69,6 +68,18 @@ fun BookingFormScreen(
         }
 
         Spacer(modifier = Modifier.height(16.dp))
+
+        // Thêm dòng hiện giá khách sạn
+        Text(
+            text = "Price: $priceHotel",
+            fontWeight = FontWeight.Bold,
+            fontSize = 20.sp,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            textAlign = TextAlign.Center
+        )
 
         OutlinedTextField(
             value = fullName,
@@ -101,10 +112,8 @@ fun BookingFormScreen(
         DateInputField(
             label = "Check-in Date",
             value = checkInDate,
-            onValueChange = {
-                checkInDate = it
-                dateOrderError = false
-            }
+            onValueChange = { checkInDate = it },
+            isDateOrderInvalid = dateOrderError
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -112,10 +121,7 @@ fun BookingFormScreen(
         DateInputField(
             label = "Check-out Date",
             value = checkOutDate,
-            onValueChange = {
-                checkOutDate = it
-                dateOrderError = false
-            },
+            onValueChange = { checkOutDate = it },
             isDateOrderInvalid = dateOrderError
         )
 
@@ -123,30 +129,23 @@ fun BookingFormScreen(
 
         OutlinedTextField(
             value = voucherCode,
-            onValueChange = {
-                voucherCode = it
-            },
+            onValueChange = { voucherCode = it },
             label = { Text("Voucher Code (Optional)") },
             modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.height(8.dp))
 
-        // Tính discount
-        if (voucherCode == "DISCOUNT10") {
+        if (voucherCode.equals("DISCOUNT10", ignoreCase = true)) {
             isVoucherValid = true
             discountAmount = 10.0
+            Text(
+                text = "Discount Applied: 10%",
+                color = MaterialTheme.colorScheme.primary
+            )
         } else {
             isVoucherValid = false
             discountAmount = 0.0
-        }
-
-
-        if (isVoucherValid) {
-            Text(
-                text = "Discount Applied: \$${"%.2f".format(roomPrice * (discountAmount / 100))}",
-                color = MaterialTheme.colorScheme.primary
-            )
         }
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -167,9 +166,7 @@ fun BookingFormScreen(
                     return@Button
                 }
 
-                val finalPrice = roomPrice - (roomPrice * (discountAmount / 100))
                 val user = auth.currentUser
-
                 if (user != null) {
                     val bookingData = hashMapOf(
                         "name" to nameHotel,
@@ -180,7 +177,7 @@ fun BookingFormScreen(
                         "phone" to phone,
                         "checkInDate" to checkInDate.text,
                         "checkOutDate" to checkOutDate.text,
-                        "finalPrice" to "%.2f".format(finalPrice)
+                        "discount" to if (isVoucherValid) "10%" else "0%"
                     )
 
                     db.collection("users")
@@ -208,6 +205,7 @@ fun BookingFormScreen(
         }
     }
 }
+
 @Composable
 fun DateInputField(
     label: String,

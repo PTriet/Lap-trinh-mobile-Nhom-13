@@ -162,10 +162,16 @@ fun InfoHotel(
 
                 Button(
                     onClick = {
-                        Log.d("InfoHotel", "Navigating to booking screen")
-                        navController.navigate(
-                            "bookingform/${Uri.encode(name)}/${Uri.encode(address)}/${Uri.encode(price)}/${Uri.encode(rating)}"
-                        )                    },
+                        val user = auth.currentUser
+                        if (user != null) {
+                            navController.navigate(
+                                "bookingform/${Uri.encode(name)}/${Uri.encode(address)}/${Uri.encode(price)}/${Uri.encode(rating)}"
+                            )
+                        } else {
+                            Toast.makeText(context, "Vui lòng đăng nhập để đặt phòng!", Toast.LENGTH_SHORT).show()
+                            navController.navigate("login?pendingSave=true")
+                        }
+                    },
                     shape = RoundedCornerShape(50.dp),
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
